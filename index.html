@@ -178,7 +178,7 @@
       <div class="result" id="result" aria-live="polite"></div>
       <div id="quiz"></div>
       <div class="actions">
-        <button type="button" id="submit">交卷并查看成绩</button>
+        <button type="button" id="submit">提交成绩并查看答案</button>
         <button type="button" id="reset" class="secondary">重新作答</button>
         <button type="button" class="secondary" onclick="window.print()">打印练习</button>
       </div>
@@ -186,11 +186,7 @@
   </main>
 
   <script>
-
-    // ===== 老师设置区 =====
-    // 把你部署好的 Google Apps Script Web App URL 粘贴到这里。
-    // 例如：https://script.google.com/macros/s/XXXXXXXX/exec
-    const GOOGLE_SCRIPT_URL = "请把Google Apps Script网址贴在这里";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZT3LOj1-rVNGTxCZw7WCTkEXl7bQGZ38Dr3d3vnUVa3f6R1bW7bD8HEiOVvi4TurHLw/exec";
 
     const questions = [
       [1,"读写整数","把 472 305 写成文字。",["四十七万二千三百零五"],"四十七万二千三百零五","输入文字"],
@@ -261,109 +257,86 @@
 
     document.querySelectorAll("[data-answer]").forEach(input => input.addEventListener("input", updateProgress));
 
-    document.getElementById("submit").addEventListener("click", () => {
+    document.getElementById("submit").addEventListener("click", async () => {
+      const button = document.getElementById("submit");
       const inputs = [...document.querySelectorAll("[data-answer]")];
       const done = inputs.filter(input => input.value.trim()).length;
       const notice = document.getElementById("notice");
+
       if (done < 20) {
-        notice.textContent = `还有 ${20 - done} 题未作答。请完成后再交卷。`;
+        notice.textContent = `还有 ${20 - done} 题未作答。请完成后再提交。`;
         notice.style.display = "block";
         window.scrollTo({top: 0, behavior: "smooth"});
         return;
       }
+
+      button.disabled = true;
+      button.textContent = "正在批改并提交…";
 
       let score = 0;
       questions.forEach(q => {
         const ok = correct(q);
         if (ok) score++;
+
         const card = document.getElementById("q" + q[0]);
         const feedback = document.getElementById("f" + q[0]);
+
         card.classList.add(ok ? "correct" : "wrong");
         feedback.className = "feedback " + (ok ? "ok" : "no");
-        feedback.textContent = ok ? "✓ 答对了" : "✗ 正确答案：" + q[4];
+
+        // 所有题目都显示正确答案，让学生交卷后可以直接查看答案。
+        feedback.textContent = ok
+          ? "✓ 答对了｜答案：" + q[4]
+          : "✗ 答错了｜正确答案：" + q[4];
+
         feedback.style.display = "block";
         document.getElementById("a" + q[0]).disabled = true;
       });
 
       const name = document.getElementById("studentName").value.trim();
-      const teacherEmail = document.getElementById("teacherEmail").value.trim();
-      const message = score === 20 ? "太棒了，全部答对！" : score >= 16 ? "做得很好，再检查几题就更棒了！" : score >= 12 ? "不错，请订正错题后再试一次。" : "继续加油，先看正确答案，再练习一次。";
+      const message = score === 20
+        ? "太棒了，全部答对！"
+        : score >= 16
+          ? "做得很好，再检查几题就更棒了！"
+          : score >= 12
+            ? "不错，请订正错题后再试一次。"
+            : "继续加油，先看正确答案，再练习一次。";
+
       const result = document.getElementById("result");
-      result.innerHTML = `<span>${name}，你的成绩是</span><strong>${score} / 20</strong><span>${message}</span><p style="margin:12px 0 0;">点击下方“发送成绩给老师”，会打开你的 Email 程序并自动填写成绩。</p>`;
+      result.innerHTML =
+        `<span>${name ? name + "，你的成绩是" : "你的成绩是"}</span>` +
+        `<strong>${score} / 20</strong>` +
+        `<span>${message}</span>`;
       result.style.display = "block";
       document.getElementById("studentName").disabled = true;
-      document.getElementById("teacherEmail").disabled = true;
 
-      const sendButton = document.getElementById("sendResult");
-      sendButton.disabled = false;
-      sendButton.dataset.score = score;
-      sendButton.dataset.name = name;
-      sendButton.dataset.email = teacherEmail;
-
-      window.scrollTo({top: 0, behavior: "smooth"});
-    });
-
-    document.getElementById("sendResult").addEventListener("click", async () => {
-      const button = document.getElementById("sendResult");
-      const name = button.dataset.name || document.getElementById("studentName").value.trim();
-      const score = Number(button.dataset.score);
-
-      if (!name) {
-        const notice = document.getElementById("notice");
-        notice.textContent = "请先填写姓名。";
-        notice.style.display = "block";
-        window.scrollTo({top: 0, behavior: "smooth"});
-        return;
-      }
-
-      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxZT3LOj1-rVNGTxCZw7WCTkEXl7bQGZ38Dr3d3vnUVa3f6R1bW7bD8HEiOVvi4TurHLw/exec")) {
-        const notice = document.getElementById("notice");
-        notice.textContent = "老师还没有设置 Google Sheet 提交网址。请把 GOOGLE_SCRIPT_URL 设置好后再使用。";
-        notice.style.display = "block";
-        window.scrollTo({top: 0, behavior: "smooth"});
-        return;
-      }
-
-      const percentage = Math.round(score / questions.length * 100);
-      const now = new Date();
-      const time = now.toLocaleString("zh-CN", {
-        year: "numeric", month: "2-digit", day: "2-digit",
-        hour: "2-digit", minute: "2-digit", second: "2-digit"
-      });
-
-      button.disabled = true;
-      button.textContent = "正在提交……";
-
+      // 自动提交到老师的 Google Sheet，不需要学生填写 Email。
       try {
-        // 使用 no-cors 方式提交到 Google Apps Script。
-        // 学生不需要 Email，也不会收到 Email。
         await fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
+          headers: {"Content-Type": "text/plain;charset=utf-8"},
           body: JSON.stringify({
-            name: name,
-            score: score,
+            name: name || "未填写",
+            score,
             total: questions.length,
-            percentage: percentage,
-            completedAt: time,
+            percentage: Math.round(score / questions.length * 100),
+            completedAt: new Date().toLocaleString("zh-CN"),
             unit: "五年级数学单元一｜1 000 000以内的整数"
           })
         });
 
-        const result = document.getElementById("result");
-        result.innerHTML = `<span>${name}，成绩已经提交！</span><strong>${score} / ${questions.length}</strong><span>老师的 Google Sheet 会自动记录你的姓名、成绩、正确率和提交时间。</span>`;
-        result.style.display = "block";
-        button.textContent = "✓ 已提交成绩";
-      } catch (error) {
-        button.disabled = false;
-        button.textContent = "提交成绩给老师";
-        const notice = document.getElementById("notice");
-        notice.textContent = "提交失败，请检查网络连接或稍后再试。";
+        notice.textContent = "✓ 成绩已自动提交给老师！下面可以查看每一题的正确答案。";
         notice.style.display = "block";
+        button.textContent = "✓ 已提交成绩｜查看答案如下";
+      } catch (error) {
+        notice.textContent = "成绩批改完成，但提交到老师那里时遇到网络问题，请检查网络后重新提交。";
+        notice.style.display = "block";
+        button.disabled = false;
+        button.textContent = "重新提交成绩并查看答案";
       }
+
+      window.scrollTo({top: 0, behavior: "smooth"});
     });
 
     document.getElementById("reset").addEventListener("click", () => {
@@ -371,13 +344,10 @@
       document.querySelectorAll(".question").forEach(card => card.classList.remove("correct", "wrong"));
       document.querySelectorAll(".feedback").forEach(item => { item.style.display = "none"; item.textContent = ""; });
       document.getElementById("studentName").disabled = false;
-      document.getElementById("teacherEmail").disabled = false;
-      document.getElementById("sendResult").disabled = true;
-      document.getElementById("sendResult").textContent = "提交成绩给老师";
-      document.getElementById("sendResult").removeAttribute("data-score");
-      document.getElementById("sendResult").removeAttribute("data-name");
-      document.getElementById("sendResult").removeAttribute("data-email");
       document.getElementById("result").style.display = "none";
+      const submitButton = document.getElementById("submit");
+      submitButton.disabled = false;
+      submitButton.textContent = "提交成绩并查看答案";
       document.getElementById("notice").style.display = "none";
       updateProgress();
       window.scrollTo({top: 0, behavior: "smooth"});
