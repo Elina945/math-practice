@@ -1,374 +1,386 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html lang="zh-Hans">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>四年级数学竖式互动练习</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>五年级数学单元一｜1 000 000以内的整数</title>
   <style>
     :root {
-      --blue: #1769aa;
-      --blue-light: #eaf5ff;
-      --green: #16834b;
-      --green-light: #e9f8ef;
-      --red: #c53737;
-      --red-light: #fff0f0;
-      --yellow: #fff8d8;
-      --ink: #243342;
-      --muted: #657585;
-      --line: #d8e2eb;
+      --blue: #146fc1;
+      --navy: #17324d;
+      --pale: #eef6fc;
+      --line: #c7d8e6;
+      --green: #087d5f;
+      --red: #bc3546;
+      --yellow: #fff2b7;
     }
-
     * { box-sizing: border-box; }
-
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif;
-      color: var(--ink);
-      background: linear-gradient(135deg, #edf8ff 0%, #fff9e9 100%);
+      color: var(--navy);
+      background-color: #f4f8fc;
+      background-image:
+        linear-gradient(rgba(20,111,193,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20,111,193,.045) 1px, transparent 1px);
+      background-size: 30px 30px;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      font-size: 16px;
     }
-
-    .page {
-      width: min(1100px, calc(100% - 28px));
-      margin: 24px auto 48px;
-    }
-
-    header {
-      padding: 26px 28px;
+    button, input { font: inherit; }
+    .header {
+      padding: 34px 20px;
       color: #fff;
-      text-align: center;
-      background: linear-gradient(120deg, #1769aa, #35a3d6);
-      border-radius: 22px;
-      box-shadow: 0 10px 25px rgba(23, 105, 170, .2);
+      background: linear-gradient(120deg, #0d5c9f, #1e82d2);
+      box-shadow: 0 10px 30px rgba(23,50,77,.18);
     }
-
-    h1 { margin: 0 0 8px; font-size: clamp(26px, 4vw, 38px); }
-    header p { margin: 0; font-size: 16px; }
-
-    .student-info {
+    .header-inner { width: min(1000px, 100%); margin: auto; }
+    .kicker { margin: 0 0 8px; font-weight: 800; letter-spacing: .12em; opacity: .9; }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; }
+    .subtitle { margin: 10px 0 0; font-size: 1rem; line-height: 1.7; opacity: .92; }
+    .layout {
+      width: min(1000px, calc(100% - 28px));
+      margin: 28px auto 60px;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin: 20px 0;
-      padding: 18px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 5px 18px rgba(45, 80, 110, .09);
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
     }
-
-    label { font-weight: 700; }
-
-    .student-info input {
+    .side {
+      position: sticky;
+      top: 16px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 10px 28px rgba(23,50,77,.09);
+    }
+    .progress-row { display: flex; justify-content: space-between; font-weight: 800; }
+    .progress-row strong { color: var(--blue); }
+    .track { height: 10px; margin: 12px 0 22px; overflow: hidden; border-radius: 99px; background: #dceaf5; }
+    .bar { width: 0; height: 100%; background: var(--blue); transition: width .2s ease; }
+    .side label { display: block; margin-bottom: 7px; font-size: .9rem; font-weight: 800; }
+    .tip { margin: 12px 0 0; color: #657c90; font-size: .82rem; line-height: 1.55; }
+    input[type="text"] {
       width: 100%;
-      margin-top: 7px;
-      padding: 11px 12px;
-      font: inherit;
-      border: 2px solid var(--line);
+      min-height: 46px;
+      padding: 9px 12px;
+      border: 1px solid #aebfcd;
       border-radius: 10px;
-    }
-
-    .instructions {
-      margin-bottom: 20px;
-      padding: 14px 18px;
-      background: var(--yellow);
-      border-left: 6px solid #f2b72c;
-      border-radius: 12px;
-      line-height: 1.7;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 30px 0 14px;
-      font-size: 23px;
-    }
-
-    .badge {
-      display: inline-grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      color: #fff;
-      background: var(--blue);
-      border-radius: 50%;
-    }
-
-    .questions {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .card {
-      position: relative;
-      padding: 17px 15px 15px;
-      text-align: center;
+      color: var(--navy);
       background: #fff;
-      border: 2px solid transparent;
-      border-radius: 16px;
-      box-shadow: 0 5px 16px rgba(45, 80, 110, .08);
-      transition: transform .15s, border-color .15s;
-    }
-
-    .card:focus-within { transform: translateY(-2px); border-color: #72b9e5; }
-    .card.correct { border-color: var(--green); background: var(--green-light); }
-    .card.wrong { border-color: var(--red); background: var(--red-light); }
-
-    .number {
-      position: absolute;
-      top: 10px;
-      left: 12px;
-      color: var(--muted);
-      font-weight: 800;
-    }
-
-    .vertical-sum {
-      width: 132px;
-      margin: 22px auto 16px;
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 27px;
-      font-weight: 700;
-      line-height: 1.2;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .top, .bottom {
-      display: grid;
-      grid-template-columns: 27px 1fr;
-      text-align: right;
-      white-space: pre;
-    }
-
-    .operator { text-align: left; }
-    .rule { margin-top: 5px; border-top: 3px solid var(--ink); }
-
-    .answer {
-      width: 100%;
-      padding: 10px 7px;
-      text-align: center;
-      font: 700 19px/1.2 Consolas, monospace;
-      border: 2px solid var(--line);
-      border-radius: 9px;
       outline: none;
     }
-
-    .answer:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23, 105, 170, .12); }
-    .feedback { min-height: 24px; margin-top: 8px; font-size: 14px; font-weight: 700; }
-    .correct .feedback { color: var(--green); }
-    .wrong .feedback { color: var(--red); }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin: 30px 0 18px;
-    }
-
-    button {
-      padding: 12px 22px;
-      font: 700 16px/1.2 inherit;
-      cursor: pointer;
-      border: 0;
-      border-radius: 12px;
-    }
-
-    .primary { color: #fff; background: var(--blue); }
-    .secondary { color: var(--blue); background: #fff; border: 2px solid var(--blue); }
-    button:hover { filter: brightness(.96); }
-
-    #result {
+    input[type="text"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(20,111,193,.13); }
+    .notice {
       display: none;
-      margin: 18px auto;
+      margin-bottom: 18px;
+      padding: 13px 16px;
+      border: 1px solid #d9a62b;
+      border-radius: 12px;
+      color: #684a00;
+      background: var(--yellow);
+      font-weight: 800;
+    }
+    .result {
+      display: none;
+      margin-bottom: 24px;
       padding: 20px;
-      text-align: center;
+      border: 2px solid #e4bb3d;
+      border-radius: 18px;
+      background: linear-gradient(120deg, #fff8d7, #fff);
+      box-shadow: 0 12px 26px rgba(90,70,0,.08);
+    }
+    .result strong { display: block; margin: 5px 0; font-size: 2rem; }
+    .section { margin-bottom: 28px; }
+    .section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .section-no {
+      width: 42px; height: 42px; display: grid; place-items: center;
+      border-radius: 13px 4px 13px 4px; color: #fff; background: var(--blue); font-weight: 900;
+    }
+    h2 { margin: 0; font-size: 1.3rem; }
+    .section-head p { margin: 3px 0 0; color: #6b8193; font-size: .87rem; }
+    .questions { display: grid; gap: 11px; }
+    .question {
+      position: relative;
+      padding: 19px 20px 19px 65px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 5px 18px rgba(45, 80, 110, .1);
+      box-shadow: 0 6px 17px rgba(23,50,77,.055);
     }
-
-    #result.show { display: block; }
-    #score { color: var(--blue); font-size: 34px; font-weight: 900; }
-    #message { margin: 8px 0 0; font-size: 18px; }
-
-    footer { margin-top: 28px; color: var(--muted); text-align: center; font-size: 13px; }
-
-    @media (max-width: 850px) { .questions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 470px) {
-      .page { width: min(100% - 18px, 1100px); margin-top: 9px; }
-      header { padding: 20px 14px; border-radius: 15px; }
-      .student-info { grid-template-columns: 1fr; }
-      .questions { gap: 10px; }
-      .card { padding: 14px 9px 12px; }
-      .vertical-sum { width: 112px; font-size: 23px; }
+    .question.correct { border-color: #6db99c; background: #f4fcf8; }
+    .question.wrong { border-color: #e39aa4; background: #fff8fa; }
+    .qno {
+      position: absolute; top: 18px; left: 17px; width: 33px; height: 33px;
+      display: grid; place-items: center; border-radius: 10px;
+      color: var(--blue); background: #e6f2fb; font-weight: 900;
     }
-
+    .question label { display: block; margin-bottom: 10px; font-weight: 800; line-height: 1.6; }
+    .feedback { display: none; margin-top: 9px; font-size: .9rem; font-weight: 800; }
+    .feedback.ok { color: var(--green); }
+    .feedback.no { color: var(--red); }
+    .actions { display: flex; justify-content: center; gap: 12px; margin-top: 30px; }
+    button {
+      min-height: 48px;
+      padding: 10px 22px;
+      border: 0;
+      border-radius: 13px;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(20,111,193,.2);
+    }
+    button.secondary { color: #145f9f; background: #fff; border: 1px solid #8fb2cf; box-shadow: none; }
+    button:hover { filter: brightness(.96); }
+    @media (max-width: 750px) {
+      .layout { grid-template-columns: 1fr; }
+      .side { position: static; }
+    }
+    @media (max-width: 500px) {
+      .header { padding: 26px 16px; }
+      .layout { width: min(100% - 20px, 1000px); margin-top: 18px; }
+      .question { padding: 17px 14px 17px 56px; }
+      .qno { left: 13px; width: 31px; height: 31px; }
+      .actions { flex-direction: column; }
+      button { width: 100%; }
+    }
     @media print {
       body { background: #fff; }
-      .page { width: 100%; margin: 0; }
-      header { color: #000; background: #fff; box-shadow: none; border: 2px solid #000; }
-      .student-info, .card { box-shadow: none; }
-      .questions { grid-template-columns: repeat(4, 1fr); }
-      .actions, #result, footer { display: none !important; }
+      .header { padding: 15px 0; color: var(--navy); background: #fff; box-shadow: none; }
+      .side, .notice, .result, .actions, .feedback { display: none !important; }
+      .layout { width: 100%; display: block; margin: 0; }
+      .question { break-inside: avoid; box-shadow: none; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header>
-      <h1>四年级数学竖式练习</h1>
-      <p>加法 · 减法｜共20题</p>
-    </header>
-
-    <section class="student-info" aria-label="学生资料">
-      <label>姓名<input id="studentName" type="text" placeholder="请输入姓名"></label>
-      <label>班级<input id="studentClass" type="text" placeholder="请输入班级"></label>
-    </section>
-
-    <div class="instructions"><strong>作答说明：</strong>先在草稿纸上列竖式计算，再把最后答案填入方框。全部完成后，按“提交并批改”。</div>
-
-    <div id="worksheet"></div>
-
-    <div class="actions">
-      <button class="primary" id="checkBtn" type="button">提交并批改</button>
-      <button class="secondary" id="resetBtn" type="button">重新练习</button>
-      <button class="secondary" type="button" onclick="window.print()">打印练习</button>
+  <header class="header">
+    <div class="header-inner">
+      <p class="kicker">五年级数学 · 单元一</p>
+      <h1>1 000 000以内的整数</h1>
+      <p class="subtitle">完成20题，检查你是否掌握读写、数位、比较、数列和近似值。</p>
     </div>
+  </header>
 
-    <section id="result" aria-live="polite">
-      <div>你的成绩</div>
-      <div id="score">0 / 20</div>
-      <p id="message"></p>
-    </section>
+  <main class="layout">
+    <aside class="side">
+      <div class="progress-row"><span>作答进度</span><strong id="count">0 / 20</strong></div>
+      <div class="track" aria-label="作答进度"><div class="bar" id="bar"></div></div>
+      <label for="studentName">姓名（选填）</label>
+      <input type="text" id="studentName" placeholder="输入姓名">
+      <p class="tip">数字可用空格分组，例如：472 305。</p>
+    </aside>
 
-    <footer>认真计算，细心检查，你一定可以！</footer>
+    <div>
+      <div class="notice" id="notice" role="alert"></div>
+      <div class="result" id="result" aria-live="polite"></div>
+      <div id="quiz"></div>
+      <div class="actions">
+        <button type="button" id="submit">交卷并查看成绩</button>
+        <button type="button" id="reset" class="secondary">重新作答</button>
+        <button type="button" class="secondary" onclick="window.print()">打印练习</button>
+      </div>
+    </div>
   </main>
 
   <script>
-    const groups = [
-      {
-        title: '第一部分：加法', icon: '+',
-        items: [
-          [2468, 1357, '+'], [5824, 3069, '+'], [7436, 2589, '+'],
-          [12675, 8346, '+'], [27408, 15637, '+'], [36954, 28076, '+'],
-          [48579, 32746, '+'], [50638, 29457, '+'], [67284, 18569, '+'],
-          [73846, 26175, '+']
-        ]
-      },
-      {
-        title: '第二部分：减法', icon: '−',
-        items: [
-          [6842, 2517, '−'], [9000, 4386, '−'], [12540, 6875, '−'],
-          [30006, 14789, '−'], [52103, 26854, '−'], [70000, 35628, '−'],
-          [86425, 47968, '−'], [60240, 28675, '−'], [91003, 54786, '−'],
-          [100000, 65847, '−']
-        ]
-      }
+
+    // ===== 老师设置区 =====
+    // 把你部署好的 Google Apps Script Web App URL 粘贴到这里。
+    // 例如：https://script.google.com/macros/s/XXXXXXXX/exec
+    const GOOGLE_SCRIPT_URL = "请把Google Apps Script网址贴在这里";
+
+    const questions = [
+      [1,"读写整数","把 472 305 写成文字。",["四十七万二千三百零五"],"四十七万二千三百零五","输入文字"],
+      [2,"读写整数","把“六十八万零四十二”写成数字。",["680042"],"680 042","输入数字"],
+      [3,"读写整数","把 905 018 写成文字。",["九十万五千零一十八","九十万五千零十八"],"九十万五千零一十八","输入文字"],
+      [4,"读写整数","写出由7个十万、4个万、6个百和2个一组成的数。",["740602"],"740 602","输入数字"],
+      [5,"数位与数值","在 683 451 中，数字8在什么数位？",["万位"],"万位","例如：千位"],
+      [6,"数位与数值","在 294 716 中，数字9的数值是多少？",["90000"],"90 000","输入数值"],
+      [7,"数位与数值","517 268 的十万位数字是多少？",["5"],"5","输入数字"],
+      [8,"数位与数值","由3个十万、6个千、5个十和4个一组成的数是多少？",["306054"],"306 054","输入数字"],
+      [9,"展开与组成","写出 821 409 的展开式。",["8000002000010004009"],"800 000 + 20 000 + 1 000 + 400 + 9","用 + 连接各数值"],
+      [10,"展开与组成","600 000 + 70 000 + 5 000 + 80 + 3 = ______",["675083"],"675 083","输入答案"],
+      [11,"比较与排列","398 765 □ 398 756（填 >、< 或 =）",[">"],">","填 >、< 或 ="],
+      [12,"比较与排列","702 090 □ 720 009（填 >、< 或 =）",["<"],"<","填 >、< 或 ="],
+      [13,"比较与排列","从小到大排列：450 210、405 120、451 020、415 200",["405120415200450210451020"],"405 120、415 200、450 210、451 020","依次输入，用逗号隔开"],
+      [14,"比较与排列","从大到小排列：608 008、680 080、600 880、608 800",["680080608800608008600880"],"680 080、608 800、608 008、600 880","依次输入，用逗号隔开"],
+      [15,"数列与近似值","235 000、245 000、255 000、265 000、______",["275000"],"275 000","输入下一个数"],
+      [16,"数列与近似值","899 998、899 999、______、900 001",["900000"],"900 000","输入缺少的数"],
+      [17,"数列与近似值","把 647 321 写成最接近的万位近似值。",["650000"],"650 000","输入近似值"],
+      [18,"数列与近似值","把 294 650 写成最接近的千位近似值。",["295000"],"295 000","输入近似值"],
+      [19,"挑战题","用0、2、4、5、7、9各一次，组成最大的六位数。",["975420"],"975 420","输入六位数"],
+      [20,"挑战题","把 764 285 写成最接近的十万位近似值。",["800000"],"800 000","输入近似值"]
     ];
 
-    const worksheet = document.getElementById('worksheet');
-    let questionNumber = 0;
+    const notes = {
+      "读写整数":"正确读出和写出六位数",
+      "数位与数值":"分清数字所在的数位及其数值",
+      "展开与组成":"理解一个数由哪些数值组成",
+      "比较与排列":"先比较最高数位，再逐位比较",
+      "数列与近似值":"找规律，并掌握四舍五入",
+      "挑战题":"综合运用本单元知识"
+    };
 
-    function getAnswer(a, b, op) {
-      if (op === '+') return a + b;
-      if (op === '−') return a - b;
-      return a * b;
+    const normalize = value => value.trim()
+      .replace(/[０-９]/g, d => String(d.charCodeAt(0) - 65296))
+      .replace(/＋/g, "+").replace(/＞/g, ">").replace(/＜/g, "<")
+      .replace(/[\s,，、+＋。．.：“”"']/g, "");
+
+    const correct = q => {
+      const value = document.getElementById("a" + q[0]).value;
+      return q[3].some(answer => normalize(answer) === normalize(value));
+    };
+
+    const sections = [...new Set(questions.map(q => q[1]))];
+    document.getElementById("quiz").innerHTML = sections.map((section, index) => `
+      <section class="section">
+        <div class="section-head">
+          <div class="section-no">${String(index + 1).padStart(2,"0")}</div>
+          <div><h2>${section}</h2><p>${notes[section]}</p></div>
+        </div>
+        <div class="questions">
+          ${questions.filter(q => q[1] === section).map(q => `
+            <article class="question" id="q${q[0]}">
+              <div class="qno">${q[0]}</div>
+              <label for="a${q[0]}">${q[2]}</label>
+              <input type="text" id="a${q[0]}" data-answer placeholder="${q[5]}" autocomplete="off">
+              <div class="feedback" id="f${q[0]}"></div>
+            </article>`).join("")}
+        </div>
+      </section>`).join("");
+
+    function updateProgress() {
+      const done = [...document.querySelectorAll("[data-answer]")].filter(input => input.value.trim()).length;
+      document.getElementById("count").textContent = done + " / 20";
+      document.getElementById("bar").style.width = (done / 20 * 100) + "%";
+      document.getElementById("notice").style.display = "none";
     }
 
-    groups.forEach(group => {
-      const heading = document.createElement('h2');
-      heading.className = 'section-title';
-      heading.innerHTML = `<span class="badge">${group.icon}</span>${group.title}`;
-      worksheet.appendChild(heading);
+    document.querySelectorAll("[data-answer]").forEach(input => input.addEventListener("input", updateProgress));
 
-      const grid = document.createElement('section');
-      grid.className = 'questions';
+    document.getElementById("submit").addEventListener("click", () => {
+      const inputs = [...document.querySelectorAll("[data-answer]")];
+      const done = inputs.filter(input => input.value.trim()).length;
+      const notice = document.getElementById("notice");
+      if (done < 20) {
+        notice.textContent = `还有 ${20 - done} 题未作答。请完成后再交卷。`;
+        notice.style.display = "block";
+        window.scrollTo({top: 0, behavior: "smooth"});
+        return;
+      }
 
-      group.items.forEach(([a, b, op]) => {
-        questionNumber += 1;
-        const answer = getAnswer(a, b, op);
-        const card = document.createElement('article');
-        card.className = 'card';
-        card.dataset.answer = answer;
-        card.innerHTML = `
-          <span class="number">${questionNumber}.</span>
-          <div class="vertical-sum" aria-label="${a} ${op} ${b}">
-            <div class="top"><span></span><span>${a}</span></div>
-            <div class="bottom"><span class="operator">${op}</span><span>${b}</span></div>
-            <div class="rule"></div>
-          </div>
-          <input class="answer" type="text" inputmode="numeric" pattern="[0-9]*"
-                 aria-label="第${questionNumber}题答案" placeholder="填写答案" autocomplete="off">
-          <div class="feedback"></div>`;
-        grid.appendChild(card);
+      let score = 0;
+      questions.forEach(q => {
+        const ok = correct(q);
+        if (ok) score++;
+        const card = document.getElementById("q" + q[0]);
+        const feedback = document.getElementById("f" + q[0]);
+        card.classList.add(ok ? "correct" : "wrong");
+        feedback.className = "feedback " + (ok ? "ok" : "no");
+        feedback.textContent = ok ? "✓ 答对了" : "✗ 正确答案：" + q[4];
+        feedback.style.display = "block";
+        document.getElementById("a" + q[0]).disabled = true;
       });
 
-      worksheet.appendChild(grid);
+      const name = document.getElementById("studentName").value.trim();
+      const teacherEmail = document.getElementById("teacherEmail").value.trim();
+      const message = score === 20 ? "太棒了，全部答对！" : score >= 16 ? "做得很好，再检查几题就更棒了！" : score >= 12 ? "不错，请订正错题后再试一次。" : "继续加油，先看正确答案，再练习一次。";
+      const result = document.getElementById("result");
+      result.innerHTML = `<span>${name}，你的成绩是</span><strong>${score} / 20</strong><span>${message}</span><p style="margin:12px 0 0;">点击下方“发送成绩给老师”，会打开你的 Email 程序并自动填写成绩。</p>`;
+      result.style.display = "block";
+      document.getElementById("studentName").disabled = true;
+      document.getElementById("teacherEmail").disabled = true;
+
+      const sendButton = document.getElementById("sendResult");
+      sendButton.disabled = false;
+      sendButton.dataset.score = score;
+      sendButton.dataset.name = name;
+      sendButton.dataset.email = teacherEmail;
+
+      window.scrollTo({top: 0, behavior: "smooth"});
     });
 
-    const cards = [...document.querySelectorAll('.card')];
-    const inputs = [...document.querySelectorAll('.answer')];
-    const result = document.getElementById('result');
+    document.getElementById("sendResult").addEventListener("click", async () => {
+      const button = document.getElementById("sendResult");
+      const name = button.dataset.name || document.getElementById("studentName").value.trim();
+      const score = Number(button.dataset.score);
 
-    inputs.forEach((input, index) => {
-      input.addEventListener('input', () => {
-        input.value = input.value.replace(/[^0-9]/g, '');
-        const card = input.closest('.card');
-        card.classList.remove('correct', 'wrong');
-        card.querySelector('.feedback').textContent = '';
+      if (!name) {
+        const notice = document.getElementById("notice");
+        notice.textContent = "请先填写姓名。";
+        notice.style.display = "block";
+        window.scrollTo({top: 0, behavior: "smooth"});
+        return;
+      }
+
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxZT3LOj1-rVNGTxCZw7WCTkEXl7bQGZ38Dr3d3vnUVa3f6R1bW7bD8HEiOVvi4TurHLw/exec")) {
+        const notice = document.getElementById("notice");
+        notice.textContent = "老师还没有设置 Google Sheet 提交网址。请把 GOOGLE_SCRIPT_URL 设置好后再使用。";
+        notice.style.display = "block";
+        window.scrollTo({top: 0, behavior: "smooth"});
+        return;
+      }
+
+      const percentage = Math.round(score / questions.length * 100);
+      const now = new Date();
+      const time = now.toLocaleString("zh-CN", {
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
       });
-      input.addEventListener('keydown', event => {
-        if (event.key === 'Enter' && inputs[index + 1]) inputs[index + 1].focus();
-      });
+
+      button.disabled = true;
+      button.textContent = "正在提交……";
+
+      try {
+        // 使用 no-cors 方式提交到 Google Apps Script。
+        // 学生不需要 Email，也不会收到 Email。
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify({
+            name: name,
+            score: score,
+            total: questions.length,
+            percentage: percentage,
+            completedAt: time,
+            unit: "五年级数学单元一｜1 000 000以内的整数"
+          })
+        });
+
+        const result = document.getElementById("result");
+        result.innerHTML = `<span>${name}，成绩已经提交！</span><strong>${score} / ${questions.length}</strong><span>老师的 Google Sheet 会自动记录你的姓名、成绩、正确率和提交时间。</span>`;
+        result.style.display = "block";
+        button.textContent = "✓ 已提交成绩";
+      } catch (error) {
+        button.disabled = false;
+        button.textContent = "提交成绩给老师";
+        const notice = document.getElementById("notice");
+        notice.textContent = "提交失败，请检查网络连接或稍后再试。";
+        notice.style.display = "block";
+      }
     });
 
-    document.getElementById('checkBtn').addEventListener('click', () => {
-      let correct = 0;
-      let firstIncomplete = null;
-
-      cards.forEach(card => {
-        const input = card.querySelector('.answer');
-        const feedback = card.querySelector('.feedback');
-        const expected = Number(card.dataset.answer);
-        const supplied = input.value.trim();
-        card.classList.remove('correct', 'wrong');
-
-        if (supplied === '') {
-          card.classList.add('wrong');
-          feedback.textContent = '还没作答';
-          if (!firstIncomplete) firstIncomplete = input;
-        } else if (Number(supplied) === expected) {
-          correct += 1;
-          card.classList.add('correct');
-          feedback.textContent = '✓ 正确';
-        } else {
-          card.classList.add('wrong');
-          feedback.textContent = `✗ 正确答案：${expected}`;
-        }
-      });
-
-      document.getElementById('score').textContent = `${correct} / ${cards.length}`;
-      const percentage = correct / cards.length;
-      document.getElementById('message').textContent =
-        percentage === 1 ? '太棒了，全部答对！' :
-        percentage >= .8 ? '做得很好，再检查一下错题吧！' :
-        percentage >= .6 ? '不错，订正错题后会更进步！' :
-        '别灰心，重新列竖式再算一次！';
-      result.classList.add('show');
-      result.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      if (firstIncomplete) setTimeout(() => firstIncomplete.focus(), 500);
-    });
-
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      inputs.forEach(input => { input.value = ''; });
-      cards.forEach(card => {
-        card.classList.remove('correct', 'wrong');
-        card.querySelector('.feedback').textContent = '';
-      });
-      result.classList.remove('show');
-      inputs[0].focus();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById("reset").addEventListener("click", () => {
+      document.querySelectorAll("[data-answer]").forEach(input => { input.value = ""; input.disabled = false; });
+      document.querySelectorAll(".question").forEach(card => card.classList.remove("correct", "wrong"));
+      document.querySelectorAll(".feedback").forEach(item => { item.style.display = "none"; item.textContent = ""; });
+      document.getElementById("studentName").disabled = false;
+      document.getElementById("teacherEmail").disabled = false;
+      document.getElementById("sendResult").disabled = true;
+      document.getElementById("sendResult").textContent = "提交成绩给老师";
+      document.getElementById("sendResult").removeAttribute("data-score");
+      document.getElementById("sendResult").removeAttribute("data-name");
+      document.getElementById("sendResult").removeAttribute("data-email");
+      document.getElementById("result").style.display = "none";
+      document.getElementById("notice").style.display = "none";
+      updateProgress();
+      window.scrollTo({top: 0, behavior: "smooth"});
     });
   </script>
 </body>
